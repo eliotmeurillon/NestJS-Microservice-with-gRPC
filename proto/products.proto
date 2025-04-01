@@ -16,6 +16,3 @@ message ProductResponse {
     int32 price = 3;
 }
 
-message ProductRequest2222sssdsss {
-    int32 productId  = 1;
-}
