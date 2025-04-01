@@ -38,7 +38,18 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/api-gateway-e2e/**/*"]
+      "exclude": ["apps/api-gateway-e2e/**/*", "apps/products-e2e/**/*"]
     }
-  ]
+  ],
+  "targetDefaults": {
+    "build": {
+      "options": {
+        "assets":[{
+          "glob":"*.proto",
+          "input":"proto",
+          "output":"proto"
+        }]
+      }
+    }
+  }
 }
