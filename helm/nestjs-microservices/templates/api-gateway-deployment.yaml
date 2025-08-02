@@ -39,7 +39,7 @@ spec:
               readOnly: true
           livenessProbe:
             httpGet:
-              path: /
+              path: /api
               port: http
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -47,7 +47,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
+              path: /api
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
