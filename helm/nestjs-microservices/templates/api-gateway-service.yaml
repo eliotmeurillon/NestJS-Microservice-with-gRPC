@@ -1,0 +1,22 @@
+{{- if .Values.apiGateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nestjs-microservices.fullname" . }}-api-gateway
+  labels:
+    {{- include "nestjs-microservices.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-gateway
+spec:
+  type: {{ .Values.apiGateway.service.type }}
+  ports:
+    - port: {{ .Values.apiGateway.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+      {{- if eq .Values.apiGateway.service.type "NodePort" }}
+      nodePort: {{ .Values.apiGateway.service.nodePort }}
+      {{- end }}
+  selector:
+    {{- include "nestjs-microservices.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: api-gateway
+{{- end }}

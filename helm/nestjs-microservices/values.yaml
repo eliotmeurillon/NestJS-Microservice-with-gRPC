@@ -1,0 +1,104 @@
+# Global configuration
+global:
+  registry: ''
+  tag: 'latest'
+  pullPolicy: IfNotPresent
+
+# Image configuration
+image:
+  registry: ''
+  repository: nestjs-microservice
+  tag: 'latest'
+  pullPolicy: IfNotPresent
+
+# Products microservice configuration
+products:
+  enabled: true
+  name: products
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    grpcPort: 5001
+  resources:
+    requests:
+      memory: '256Mi'
+      cpu: '100m'
+    limits:
+      memory: '512Mi'
+      cpu: '500m'
+  env:
+    NODE_ENV: production
+    GRPC_PORT: '5001'
+
+# API Gateway configuration
+apiGateway:
+  enabled: true
+  name: api-gateway
+  replicaCount: 1
+  service:
+    type: NodePort
+    httpPort: 3000
+    nodePort: 30080
+  resources:
+    requests:
+      memory: '256Mi'
+      cpu: '100m'
+    limits:
+      memory: '512Mi'
+      cpu: '500m'
+  env:
+    NODE_ENV: production
+    PORT: '3000'
+    PRODUCTS_SERVICE_URL: 'nestjs-microservices-products:5001'
+
+# ConfigMap for proto files
+configMap:
+  enabled: true
+  name: proto-files
+
+# Ingress configuration (optional for Minikube)
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts:
+    - host: nestjs-microservices.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Service Monitor for Prometheus (optional)
+serviceMonitor:
+  enabled: false
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Autoscaling (disabled by default for Minikube)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80

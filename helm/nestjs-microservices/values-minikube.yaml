@@ -1,0 +1,81 @@
+# Default values for nestjs-microservices on Minikube
+# This is optimized for development/testing on Minikube
+
+global:
+  registry: ''
+  tag: 'latest'
+  pullPolicy: Never # Use Never for local images
+
+image:
+  registry: ''
+  repository: nestjs-microservice
+  tag: 'latest'
+  pullPolicy: Never # Use local images built with Minikube's Docker daemon
+
+products:
+  enabled: true
+  name: products
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    grpcPort: 5001
+  resources:
+    requests:
+      memory: '128Mi'
+      cpu: '50m'
+    limits:
+      memory: '256Mi'
+      cpu: '200m'
+  env:
+    NODE_ENV: development
+    GRPC_PORT: '5001'
+
+apiGateway:
+  enabled: true
+  name: api-gateway
+  replicaCount: 1
+  service:
+    type: NodePort
+    httpPort: 3000
+    nodePort: 30080
+  resources:
+    requests:
+      memory: '128Mi'
+      cpu: '50m'
+    limits:
+      memory: '256Mi'
+      cpu: '200m'
+  env:
+    NODE_ENV: development
+    PORT: '3000'
+    PRODUCTS_SERVICE_URL: 'nestjs-microservices-products:5001'
+
+# Enable ingress for easy access
+ingress:
+  enabled: true
+  className: 'nginx'
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: nestjs-microservices.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Disable autoscaling for Minikube
+autoscaling:
+  enabled: false
+
+# Relaxed security for development
+securityContext:
+  runAsNonRoot: false
+  # runAsUser: 1001
+  # runAsGroup: 1001
+  # fsGroup: 1001
+
+podSecurityContext:
+  runAsNonRoot: false
+  # runAsUser: 1001
+  # runAsGroup: 1001
+  # fsGroup: 1001

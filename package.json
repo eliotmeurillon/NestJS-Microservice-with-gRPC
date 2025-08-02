@@ -3,7 +3,16 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "generate-proto-types": "npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true"
+    "generate-proto-types": "npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true",
+    "helm:deploy:minikube": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-minikube.ps1",
+    "helm:cleanup:minikube": "powershell -ExecutionPolicy Bypass -File ./scripts/cleanup-minikube.ps1",
+    "helm:validate": "powershell -ExecutionPolicy Bypass -File ./scripts/validate-helm-chart.ps1",
+    "helm:test": "powershell -ExecutionPolicy Bypass -File ./scripts/test-deployment.ps1",
+    "helm:lint": "helm lint ./helm/nestjs-microservices",
+    "helm:template": "helm template nestjs-microservices ./helm/nestjs-microservices --values ./helm/nestjs-microservices/values-minikube.yaml",
+    "k8s:status": "kubectl get all -l app.kubernetes.io/instance=nestjs-microservices",
+    "k8s:logs:api-gateway": "kubectl logs -f deployment/nestjs-microservices-api-gateway",
+    "k8s:logs:products": "kubectl logs -f deployment/nestjs-microservices-products"
   },
   "nx": {
     "targets": {
@@ -47,6 +56,30 @@
         "executor": "nx:run-commands",
         "options": {
           "command": "docker-compose -f docker-compose.dev.yml down"
+        }
+      },
+      "helm:deploy:minikube": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-minikube.ps1"
+        }
+      },
+      "helm:cleanup:minikube": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "powershell -ExecutionPolicy Bypass -File ./scripts/cleanup-minikube.ps1"
+        }
+      },
+      "helm:validate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "powershell -ExecutionPolicy Bypass -File ./scripts/validate-helm-chart.ps1"
+        }
+      },
+      "helm:test": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "powershell -ExecutionPolicy Bypass -File ./scripts/test-deployment.ps1"
         }
       }
     }

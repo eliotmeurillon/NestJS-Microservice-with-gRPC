@@ -1,0 +1,17 @@
+apiVersion: v2
+name: nestjs-microservices
+description: A Helm chart for NestJS microservices with gRPC
+type: application
+version: 0.1.0
+appVersion: '1.0.0'
+keywords:
+  - nestjs
+  - microservices
+  - grpc
+  - nodejs
+home: https://github.com/eliotmeurillon/NestJS-Microservice-with-gRPC
+sources:
+  - https://github.com/eliotmeurillon/NestJS-Microservice-with-gRPC
+maintainers:
+  - name: Eliot Meurillon
+    email: eliot@example.com

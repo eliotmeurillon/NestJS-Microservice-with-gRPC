@@ -1,0 +1,19 @@
+{{- if .Values.products.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nestjs-microservices.fullname" . }}-products
+  labels:
+    {{- include "nestjs-microservices.labels" . | nindent 4 }}
+    app.kubernetes.io/component: products
+spec:
+  type: {{ .Values.products.service.type }}
+  ports:
+    - port: {{ .Values.products.service.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    {{- include "nestjs-microservices.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: products
+{{- end }}

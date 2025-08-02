@@ -1,0 +1,114 @@
+# Production values for nestjs-microservices
+# Use this file for production deployments
+
+global:
+  registry: 'your-registry.com/'
+  tag: 'v1.0.0'
+  pullPolicy: Always
+
+image:
+  registry: 'your-registry.com/'
+  repository: nestjs-microservice
+  tag: 'v1.0.0'
+  pullPolicy: Always
+
+products:
+  enabled: true
+  name: products
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    grpcPort: 5001
+  resources:
+    requests:
+      memory: '512Mi'
+      cpu: '200m'
+    limits:
+      memory: '1Gi'
+      cpu: '1000m'
+  env:
+    NODE_ENV: production
+    GRPC_PORT: '5001'
+
+apiGateway:
+  enabled: true
+  name: api-gateway
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    httpPort: 3000
+  resources:
+    requests:
+      memory: '512Mi'
+      cpu: '200m'
+    limits:
+      memory: '1Gi'
+      cpu: '1000m'
+  env:
+    NODE_ENV: production
+    PORT: '3000'
+    PRODUCTS_SERVICE_URL: 'nestjs-microservices-products:5001'
+
+# Enable ingress with TLS
+ingress:
+  enabled: true
+  className: 'nginx'
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+  hosts:
+    - host: api.your-domain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nestjs-microservices-tls
+      hosts:
+        - api.your-domain.com
+
+# Enable autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Production security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+# Node selector for production nodes
+nodeSelector:
+  node-type: production
+
+# Tolerations for dedicated nodes
+tolerations:
+  - key: 'dedicated'
+    operator: 'Equal'
+    value: 'production'
+    effect: 'NoSchedule'
+
+# Affinity rules
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - nestjs-microservices
+          topologyKey: kubernetes.io/hostname
