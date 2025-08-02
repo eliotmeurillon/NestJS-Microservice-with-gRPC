@@ -1,13 +1,15 @@
-# Dependencies
+# Dependencies (will be installed fresh)
 node_modules
 npm-debug.log*
-pnpm-debug.log*
+
+# Don't exclude pnpm-lock.yaml - we need it for dependency installation
 
 # Testing
 coverage
 .nyc_output
 
-# Production build (for dev dockerfile, we keep dist for hot reloading)
+# Production build (we build inside the container)
+# Comment out dist to allow local builds if needed
 # dist
 # build
 
@@ -28,7 +30,7 @@ pids
 *.seed
 *.pid.lock
 
-# Nx cache
+# Nx cache (can make image larger, exclude for production)
 .nx
 
 # IDE files
@@ -50,8 +52,14 @@ Thumbs.db
 .git
 .gitignore
 
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
 # Documentation
 README.md
+DOCKER*.md
 docs/
 
 # CI/CD
