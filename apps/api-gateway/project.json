@@ -38,6 +38,21 @@
       "options": {
         "passWithNoTests": true
       }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "docker build -f Dockerfile --build-arg APP_NAME=api-gateway -t api-gateway .",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "docker-run": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker-build"],
+      "options": {
+        "command": "docker run -p 3000:3000 --name api-gateway-container api-gateway"
+      }
     }
   }
 }

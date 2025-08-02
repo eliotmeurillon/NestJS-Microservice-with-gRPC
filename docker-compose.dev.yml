@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Products Microservice - Development
+  products-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nestjs-products-dev
+    ports:
+      - '3001:3000'
+      - '9229:9229' # Debug port for products
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - GRPC_PORT=5001
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+    networks:
+      - nestjs-dev-network
+    restart: unless-stopped
+    command: pnpm nx serve products
+
+  # API Gateway - Development
+  api-gateway-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nestjs-api-gateway-dev
+    ports:
+      - '3000:3000'
+      - '9228:9228' # Debug port for api-gateway
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - PRODUCTS_SERVICE_URL=products-dev:5001
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+    networks:
+      - nestjs-dev-network
+    depends_on:
+      - products-dev
+    restart: unless-stopped
+    command: pnpm nx serve api-gateway
+
+networks:
+  nestjs-dev-network:
+    driver: bridge
+    name: nestjs-microservices-dev-network

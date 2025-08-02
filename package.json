@@ -3,13 +3,51 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "generate-proto-types":"npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true"
+    "generate-proto-types": "npx protoc --ts_proto_out=./types/ ./proto/*.proto --ts_proto_opt=nestJs=true"
   },
   "nx": {
     "targets": {
-      "generate-proto-types":{
-        "cache":true,
-        "inputs": ["{workspaceRoot}/proto/*.proto"]
+      "generate-proto-types": {
+        "cache": true,
+        "inputs": [
+          "{workspaceRoot}/proto/*.proto"
+        ]
+      },
+      "docker-build": {
+        "dependsOn": [
+          "build"
+        ],
+        "command": "docker build -f Dockerfile . -t @nestjs-microservice/source"
+      },
+      "docker-compose:up": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose up --build -d"
+        }
+      },
+      "docker-compose:down": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose down"
+        }
+      },
+      "docker-compose:logs": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose logs -f"
+        }
+      },
+      "docker-compose:dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose -f docker-compose.dev.yml up --build"
+        }
+      },
+      "docker-compose:dev:down": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose -f docker-compose.dev.yml down"
+        }
       }
     }
   },

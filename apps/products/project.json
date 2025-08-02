@@ -42,8 +42,21 @@
     },
     "generate-proto-types": {
       "command": "nx generate-proto-types"
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "docker build -f Dockerfile --build-arg APP_NAME=products -t products .",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "docker-run": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker-build"],
+      "options": {
+        "command": "docker run -p 3001:3000 --name products-container products"
+      }
     }
-    
   }
- 
 }

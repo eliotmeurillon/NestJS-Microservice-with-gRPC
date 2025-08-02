@@ -1,0 +1,25 @@
+# Development Dockerfile for hot reloading
+FROM docker.io/node:lts-alpine
+
+# Install pnpm
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies (including dev dependencies)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Generate proto types
+RUN pnpm nx generate-proto-types
+
+# Expose ports (3000 for app, 9229/9228 for debugging)
+EXPOSE 3000 9229 9228
+
+# Default command (can be overridden in docker-compose)
+CMD ["pnpm", "nx", "serve", "api-gateway"]
