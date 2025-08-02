@@ -15,6 +15,7 @@ import { ProductController } from './product/product.controller';
         options: {
           package: PRODUCTS_PACKAGE_NAME,
           protoPath: join(__dirname, 'proto/products.proto'),
+          url: process.env.PRODUCTS_SERVICE_URL || 'localhost:5001',
         },
       },
     ]),

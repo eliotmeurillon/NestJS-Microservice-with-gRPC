@@ -18,12 +18,15 @@ async function bootstrap() {
       options: {
         package: PRODUCTS_PACKAGE_NAME,
         protoPath: join(__dirname, 'proto/products.proto'),
+        url: `0.0.0.0:${process.env.GRPC_PORT || 5001}`,
       },
     }
   );
   await app.listen();
 
-  Logger.log(`🚀 Application is running on gRPC channel`);
+  Logger.log(
+    `🚀 Application is running on gRPC port ${process.env.GRPC_PORT || 5001}`
+  );
 }
 
 bootstrap();

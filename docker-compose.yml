@@ -10,28 +10,28 @@ services:
         APP_NAME: products
     container_name: nestjs-products
     ports:
-      - '3001:3000' # Map to different port to avoid conflicts
+      - '5001:5001' # gRPC port instead of HTTP
     environment:
       - NODE_ENV=production
-      - PORT=3000
       - GRPC_PORT=5001
     volumes:
       - ./proto:/app/proto:ro
     networks:
       - nestjs-network
     restart: unless-stopped
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'sh',
-          '-c',
-          'wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1',
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    # Remove HTTP health check since this is a gRPC-only service
+    # healthcheck:
+    #   test:
+    #     [
+    #       'CMD',
+    #       'sh',
+    #       '-c',
+    #       'wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1',
+    #     ]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
 
   # API Gateway
   api-gateway:
@@ -52,8 +52,7 @@ services:
     networks:
       - nestjs-network
     depends_on:
-      products:
-        condition: service_healthy
+      - products # Simple dependency without health check
     restart: unless-stopped
     healthcheck:
       test:
